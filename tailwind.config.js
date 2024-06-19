@@ -10,12 +10,16 @@ module.exports = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
+     
     },
+      light: {
+        layout: {}, // light theme layout tokens
+        colors: {}, // light theme colors
+      },
+      dark: {
+        layout: {}, // dark theme layout tokens
+        colors: {}, // dark theme colors
+      },
   },
   darkMode: "class",
   plugins: [nextui()]

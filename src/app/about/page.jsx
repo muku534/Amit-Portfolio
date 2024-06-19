@@ -101,9 +101,9 @@ export default function About() {
 
     return (
         <div id="About">
-            <section className="flex lg:flex-row flex-col w-full pt-14 bg-gray-50 lg:mb-20 mb-10 lg:pb-10">
+            <section className="flex lg:flex-row flex-col w-full pt-14 bg-gray-50 dark:bg-black lg:mb-20 mb-10 lg:pb-10 ">
                 <div className="w-full lg:w-1/2 lg:px-14 px-5 justify-center items-center">
-                    <h1 className="text-4xl font-bold mb-4 lg:pb-0 pb-10">Education</h1>
+                    <h1 className="text-4xl font-bold mb-4 lg:pb-0 pb-10 dark:text-gray-400">Education</h1>
                     <Timeline position="alternate">
                         {education.map((item) => (
                             <TimelineItem key={item.id}>
@@ -111,16 +111,16 @@ export default function About() {
                                     sx={{ m: 'auto 0' }}
                                     align="right"
                                     variant="body2"
-                                    color="text.secondary"
+                                    color="text.secondary dark:text-gray-400"
                                 >
                                     {item.year}
                                 </TimelineOppositeContent>
-                                <TimelineSeparator>
-                                    <TimelineConnector />
-                                    <TimelineDot>
+                                <TimelineSeparator >
+                                    <TimelineConnector className='dark:bg-primary-600' />
+                                    <TimelineDot className='dark:bg-primary-600'>
                                         <WorkIcon />
                                     </TimelineDot>
-                                    <TimelineConnector />
+                                    <TimelineConnector className='dark:bg-primary-600' />
                                 </TimelineSeparator>
                                 <TimelineContent sx={{ py: '12px', px: 2 }}>
                                     <motion.div
@@ -130,11 +130,11 @@ export default function About() {
                                         whileHover={{ rotate: 5 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        <Typography variant="h6" component="span">
+                                        <Typography variant="h6" component="span" className='dark:text-gray-300'>
                                             {item.title}
                                         </Typography>
-                                        <Typography>{item.institution}</Typography>
-                                        <Typography variant="body2">{item.description}</Typography>
+                                        <Typography className='dark:text-gray-300'>{item.institution}</Typography>
+                                        <Typography variant="body2" className='dark:text-gray-400'>{item.description}</Typography>
                                     </motion.div>
                                 </TimelineContent>
                             </TimelineItem>
@@ -143,7 +143,7 @@ export default function About() {
                 </div>
 
                 <div className="w-full lg:w-1/2 lg:px-14 px-5 lg:pt-0 pt-10 justify-center items-center">
-                    <h1 className="text-4xl font-bold mb-4 lg:pb-0 pb-10">Experience</h1>
+                    <h1 className="text-4xl font-bold mb-4 lg:pb-0 pb-10 dark:text-gray-400">Experience</h1>
                     <Timeline position="alternate">
                         {experience.map((item) => (
                             <TimelineItem key={item.id}>
@@ -151,16 +151,16 @@ export default function About() {
                                     sx={{ m: 'auto 0' }}
                                     align="right"
                                     variant="body2"
-                                    color="text.secondary"
+                                    color="text.secondary dark:text-gray-400"
                                 >
                                     {item.year}
                                 </TimelineOppositeContent>
                                 <TimelineSeparator>
-                                    <TimelineConnector />
-                                    <TimelineDot>
+                                    <TimelineConnector className='dark:bg-primary-600' />
+                                    <TimelineDot className='dark:bg-primary-600'>
                                         <WorkIcon />
                                     </TimelineDot>
-                                    <TimelineConnector />
+                                    <TimelineConnector className='dark:bg-primary-600' />
                                 </TimelineSeparator>
                                 <TimelineContent sx={{ py: '12px', px: 2 }}>
                                     <motion.div
@@ -170,11 +170,11 @@ export default function About() {
                                         whileHover={{ rotate: 5 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        <Typography variant="h6" component="span">
+                                        <Typography variant="h6" component="span" className='dark:text-gray-300'>
                                             {item.title}
                                         </Typography>
-                                        <Typography>{item.institution}</Typography>
-                                        <Typography variant="body2">{item.description}</Typography>
+                                        <Typography className='dark:text-gray-300'>{item.institution}</Typography>
+                                        <Typography variant="body2" className='dark:text-gray-400'>{item.description}</Typography>
                                     </motion.div>
                                 </TimelineContent>
                             </TimelineItem>

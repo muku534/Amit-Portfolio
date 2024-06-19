@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState } from "react";
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Button, Avatar } from "@nextui-org/react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Button, Avatar, Switch } from "@nextui-org/react";
 import Login from "../login/Page";
 import Signup from "../signup/Page";
 import { auth } from "@/app/firebase";
@@ -15,6 +16,14 @@ export default function Header() {
     const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
     const [session, setSession] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [mounted, setMounted] = useState(false)
+    const { theme, setTheme } = useTheme();
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!mounted) return null
 
 
     auth.onAuthStateChanged((currentUser) => {
@@ -60,7 +69,7 @@ export default function Header() {
     const handleLogout = async () => {
         try {
             await auth.signOut();
-            setUser(null); 
+            setUser(null);
         } catch (error) {
             console.error("Sign-out error:", error);
         }
@@ -106,6 +115,16 @@ export default function Header() {
                 </NavbarItem>
             </NavbarContent>
             <NavbarContent justify="end">
+                {isMenuOpen === false && (
+                    <>
+                        <Switch
+                            value={theme === 'dark'}
+                            onChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                            label={theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+                            scale="sm"
+                        />
+                    </>
+                )}
                 {user ? (
                     <NavbarItem>
                         <Dropdown>
@@ -135,6 +154,7 @@ export default function Header() {
                         </NavbarItem>
                     </>
                 )}
+
             </NavbarContent>
             <NavbarMenu>
                 {menuItems.map((item, index) => (
@@ -160,6 +180,7 @@ export default function Header() {
                         Sign Up
                     </Button>
                 )}
+
             </NavbarMenu>
             <Login isOpen={isLoginModalOpen} onOpenChange={setIsLoginModalOpen} />
             <Signup isOpen={isSignUpModalOpen} onOpenChange={setIsSignUpModalOpen} />

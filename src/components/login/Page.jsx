@@ -1,10 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Checkbox, Input, Link } from "@nextui-org/react";
 import Image from "next/image";
-import { EmailAuthCredential, EmailAuthProvider, GithubAuthProvider, GoogleAuthProvider, fetchSignInMethodsForEmail, getRedirectResult, linkWithCredential, signInWithPopup, signInWithRedirect } from "firebase/auth";
+import { EmailAuthCredential, EmailAuthProvider, GithubAuthProvider, signInWithEmailAndPassword, GoogleAuthProvider, fetchSignInMethodsForEmail, getRedirectResult, linkWithCredential, signInWithPopup, signInWithRedirect } from "firebase/auth";
 import { auth } from "@/app/firebase";
 
 export default function Login({ isOpen, onOpenChange }) {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleSignIn = async () => {
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            onOpenChange(false); // Close modal on successful sign-in
+        } catch (error) {
+            setError(error.message);
+        }
+    };
 
     const signInWithGoogle = async () => {
         try {
@@ -91,14 +104,14 @@ export default function Login({ isOpen, onOpenChange }) {
                             </div>
                         </ModalBody>
                         <ModalFooter className="flex justify-center">
-                            <Button color="primary"  >
+                            <Button color="primary" onPress={handleSignIn} >
                                 Sign in
                             </Button>
                         </ModalFooter>
 
-                        <Button color="dark" onClick={signInWithGoogle} className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-gray-400 mx-10 my-2">
+                        <Button color="dark" onClick={signInWithGoogle} className="flex items-center bg-gray-100 text-gray-600 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-gray-400 mx-10 my-2">
                             <div className="mr-2">
-                                {/* <Image src="/assets/Google.png" alt="Google Logo" width={24} height={24} className="filter invert" /> */}
+                                <Image src="/assets/images/google.png" alt="Google Logo" width={24} height={24}  />
                             </div>
                             Sign in with Google
                         </Button>
