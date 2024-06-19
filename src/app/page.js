@@ -7,6 +7,8 @@ import About from './about/page';
 import Materials from './materials/page';
 import Blogs from './blogs/page';
 import Work from './work/page';
+import { motion } from 'framer-motion';
+
 export default function Home() {
 
   return (
@@ -14,8 +16,16 @@ export default function Home() {
       <main id="Home" className="flex w-full flex-col lg:flex-row  lg:mt-40 lg:mb-20 justify-center items-center ">
         <div className="lg:w-1/2 lg:pr-10 lg:px-32 flex flex-col justify-center items-center lg:items-start text-center lg:text-left">
           <div className="lg:mb-10 ml-5 pr-5 justify-center items-center mt-16 lg:mt-0"> {/* Add mt-5 for small and medium screens */}
-            <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" className='mb-5' />
-            <h1 className="text-3xl lg:text-5xl font-normal leading-tight tracking-tight text-start text-gray-900 dark:text-text-gray-900 mb-8 lg:mb-14">Hello! I&apos;m Dr.Amit Patel </h1>
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" className="mb-5" />
+              <h1 className="text-3xl lg:text-5xl font-normal leading-tight tracking-tight text-start text-gray-900 dark:text-text-gray-900 mb-8 lg:mb-14">
+                Hello! I&apos;m Dr.Amit Patel{' '}
+              </h1>
+            </motion.div>
           </div>
         </div>
         <div className="w-full lg:w-1/2 lg:px-14 justify-center items-center">

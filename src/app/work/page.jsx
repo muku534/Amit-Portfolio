@@ -25,8 +25,8 @@ export default function Work() {
     return (
         <>
             <main className="flex w-full lg:flex-row flex-col p-5 mt-10 lg:mt-20 lg:mb-10 justify-center items-center ">
-                <div className="lg:w-2/2 lg:pr-10 lg:px-32 flex flex-col justify-center items-center text-center ">
-                    <div className="lg:mb-10 lg:ml-5 pt-5 justify-center items-center">
+                <div className="lg:w-2/2 lg:pr-10 lg:px-10 flex flex-col justify-center items-center text-center ">
+                    <div className="lg:mb-10  pt-5 justify-center items-center">
                         <h1 className="text-2xl lg:text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-text-gray-900 mb-4">Work</h1>
                         <p className="text-md lg:text-md font-normal text-gray-400 tracking-tight mb-4 leading-relaxed">We use an agile approach to test assumptions and connect with the needs of your audience early and often.</p>
 

@@ -127,6 +127,8 @@ export default function About() {
                                         initial={{ opacity: 0, x: -50 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ duration: 0.5 }}
+                                        whileHover={{ rotate: 5 }}
+                                        whileTap={{ scale: 0.95 }}
                                     >
                                         <Typography variant="h6" component="span">
                                             {item.title}
@@ -165,6 +167,8 @@ export default function About() {
                                         initial={{ opacity: 0, x: -50 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ duration: 0.5 }}
+                                        whileHover={{ rotate: 5 }}
+                                        whileTap={{ scale: 0.95 }}
                                     >
                                         <Typography variant="h6" component="span">
                                             {item.title}
