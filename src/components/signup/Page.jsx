@@ -1,25 +1,38 @@
 import React, { useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Checkbox, Input, Link } from "@nextui-org/react";
-import { auth } from "@/app/firebase"; // Adjust this import based on your Firebase configuration
+import { auth, db } from "@/app/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 export default function Signup({ isOpen, onOpenChange }) {
     const [firstName, setFirstName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [specialCode, setSpecialCode] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState(null);
 
     const handleSignUp = async () => {
         try {
-            const userCredential = await createUserWithEmailAndPassword(email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            // Optionally update the user's display name
-            await user.updateProfile({
-                displayName: firstName
+
+            // Determine role and collection
+            let role = 'user';
+            let collection = 'users'; // Default collection for regular users
+            if (specialCode === 'PROFESSOR123') { // Example special code for admin
+                role = 'admin';
+                collection = 'admins'; // Collection for admins
+            }
+
+            // Set additional user data in Firestore
+            await setDoc(doc(db, collection, user.uid), {
+                firstName,
+                email,
+                password,
+                role
             });
-            // Optionally send email verification
-            await user.sendEmailVerification();
+
             // Handle successful signup (e.g., close modal)
             onOpenChange(false);
         } catch (error) {
@@ -62,6 +75,15 @@ export default function Signup({ isOpen, onOpenChange }) {
                         onChange={(e) => setPassword(e.target.value)}
                         variant="bordered"
                     />
+                    <Input
+                        label="Special Code"
+                        placeholder="Enter your Special Code"
+                        type="text"
+                        value={specialCode}
+                        onChange={(e) => setSpecialCode(e.target.value)}
+                        variant="bordered"
+                    />
+
                     <div className="flex py-2 px-1 justify-between">
                         <Checkbox
                             checked={rememberMe}

@@ -32,15 +32,15 @@ export default function Work() {
 
                         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 justify-center items-center lg:items-start">
                             {Works.map((item, index) => (
-                                <div key={item.id} class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                                <div key={item.id} className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                                     <a href="#">
-                                        <Image class="rounded-t-lg " src={item.image} alt="" />
+                                        <Image className="rounded-t-lg " src={item.image} alt="" />
                                     </a>
-                                    <div class="p-5">
+                                    <div className="p-5">
                                         <a href="#">
-                                            <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">{item.title}</h5>
+                                            <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">{item.title}</h5>
                                         </a>
-                                        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{item.description}</p>
+                                        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{item.description}</p>
                                        
                                     </div>
                                 </div>

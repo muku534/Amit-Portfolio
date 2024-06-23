@@ -5,17 +5,23 @@ import { EmailAuthCredential, EmailAuthProvider, GithubAuthProvider, signInWithE
 import { auth } from "@/app/firebase";
 
 export default function Login({ isOpen, onOpenChange }) {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [rememberMe, setRememberMe] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
 
-    const handleSignIn = async () => {
+    const signIn = async () => {
         try {
-            await auth.signInWithEmailAndPassword(email, password);
-            onOpenChange(false); // Close modal on successful sign-in
+            await signInWithEmailAndPassword(auth, email, password);
+            onOpenChange(false); // Close modal after successful sign-in
         } catch (error) {
-            setError(error.message);
+            if (error.code === 'auth/user-not-found') {
+                setError('No user found for that email.');
+            } else if (error.code === 'auth/wrong-password') {
+                setError('Wrong password provided for that user.');
+            } else {
+                setError(error.message);
+            }
+            console.log(error);
         }
     };
 
@@ -26,15 +32,6 @@ export default function Login({ isOpen, onOpenChange }) {
             await signInWithRedirect(auth, provider);
         } catch (error) {
             console.error("Google sign-in error: ", error);
-        }
-    };
-
-    const signInWithGitHub = async () => {
-        try {
-            const provider = new GithubAuthProvider();
-            await signInWithRedirect(auth, provider);
-        } catch (error) {
-            console.error("GitHub sign-in error: ", error);
         }
     };
 
@@ -80,6 +77,8 @@ export default function Login({ isOpen, onOpenChange }) {
                                 label="Email"
                                 placeholder="Enter your email"
                                 variant="bordered"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                             <Input
                                 // endContent={
@@ -88,6 +87,8 @@ export default function Login({ isOpen, onOpenChange }) {
                                 label="Password"
                                 placeholder="Enter your password"
                                 type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 variant="bordered"
                             />
                             <div className="flex py-2 px-1 justify-between">
@@ -102,16 +103,17 @@ export default function Login({ isOpen, onOpenChange }) {
                                     Forgot password?
                                 </Link>
                             </div>
+                            {error && <p className="text-red-500">{error}</p>}
                         </ModalBody>
                         <ModalFooter className="flex justify-center">
-                            <Button color="primary" onPress={handleSignIn} >
+                            <Button color="primary" onPress={signIn} >
                                 Sign in
                             </Button>
                         </ModalFooter>
 
                         <Button color="dark" onClick={signInWithGoogle} className="flex items-center bg-gray-100 text-gray-600 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-gray-400 mx-10 my-2">
                             <div className="mr-2">
-                                <Image src="/assets/images/google.png" alt="Google Logo" width={24} height={24}  />
+                                <Image src="/assets/images/google.png" alt="Google Logo" width={24} height={24} />
                             </div>
                             Sign in with Google
                         </Button>
