@@ -14,7 +14,7 @@ const withAdminAccess = (WrappedComponent) => {
         useEffect(() => {
             const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
                 if (currentUser) {
-                    const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                    const userDoc = await getDoc(doc(db, 'admins', currentUser.uid));
                     const userData = userDoc.data();
 
                     if (userData?.role === 'admin') {

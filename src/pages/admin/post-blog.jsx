@@ -1,9 +1,17 @@
 // pages/admin/post-blog.js
+import PostBlogs from '@/components/admin/postBlogs';
+import Footer from '@/components/footer/page';
+import Header from '@/components/navbar/page';
 import React from 'react';
-import PostBlogPage from '@/components/PostBlogPage';
 
 const PostBlog = () => {
-    return <PostBlogPage />;
+    return (
+        <>
+            <Header />
+            <PostBlogs />;
+            <Footer />
+        </>
+    )
 };
 
 export default PostBlog;

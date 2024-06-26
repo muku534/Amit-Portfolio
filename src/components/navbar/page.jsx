@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Button, Avatar, Switch } from "@nextui-org/react";
 import Login from "../login/Page";
 import Signup from "../signup/Page";
-import { auth } from "@/app/firebase";
+import { auth, db } from "@/app/firebase";
 import Link from "next/link";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, } from "@nextui-org/react";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function Header() {
     const [user, setUser] = useState(null);
@@ -16,33 +17,50 @@ export default function Header() {
     const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
     const [session, setSession] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [mounted, setMounted] = useState(false)
     const { theme, setTheme } = useTheme();
 
     useEffect(() => {
-        setMounted(true)
-    }, [])
+        const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+            if (currentUser) {
+                try {
+                    const userDoc = await getDoc(doc(db, "admins", currentUser.uid)); // Assuming admins collection
+                    if (userDoc.exists()) {
+                        setUser({ ...currentUser, role: 'admin', ...userDoc.data() });
 
-    if (!mounted) return null
+                    } else {
+                        const userDoc = await getDoc(doc(db, "users", currentUser.uid)); // Assuming users collection
+                        if (userDoc.exists()) {
+                            setUser({ ...currentUser, role: 'user', ...userDoc.data() });
+                        } else {
+                            setUser(null); // Handle case where user document doesn't exist
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data: ", error);
+                }
+            } else {
+                setUser(null); // No user signed in
+            }
+            setLoading(false);
+        });
 
+        return () => unsubscribe();
+    }, []);
 
-    auth.onAuthStateChanged((currentUser) => {
-        if (currentUser) {
-            // User is signed in.
-            setUser(currentUser);
-            // console.log("image",user);
-        } else {
-            // No user is signed in.
-            setUser(null);
-        }
-    });
+    useEffect(() => {
+        console.log("Current user:", user); // Log user whenever it changes
+    }, [user]);
 
     const menuItems = [
-        "Home",
-        "About",
-        "Materials",
-        "Blog",
-        "Contact"
+        { text: "Home", url: "/" },
+        { text: "About", url: "/about" },
+        { text: "Materials", url: "/materials" },
+        { text: "Blog", url: "/blogs" },
+        { text: "Contact", url: "/contact" },
+        ...(user?.role === 'admin' ? [
+            { text: "Add Materials", url: "/admin/add-material" },
+            { text: "Post Blogs", url: "/admin/post-blog" }
+        ] : [])
     ];
 
     const handleMenuItemClick = () => {
@@ -103,6 +121,20 @@ export default function Header() {
                         Materials
                     </Link>
                 </NavbarItem>
+                {user?.role === 'admin' && (
+                    <>
+                        <NavbarItem>
+                            <Link color="foreground" href="/admin/add-material">
+                                Add Materials
+                            </Link>
+                        </NavbarItem>
+                        <NavbarItem>
+                            <Link color="foreground" href="/admin/post-blog">
+                                PostBlogs
+                            </Link>
+                        </NavbarItem>
+                    </>
+                )}
                 <NavbarItem>
                     <Link color="foreground" href="/blogs">
                         Blogs
@@ -132,7 +164,6 @@ export default function Header() {
                                 <Avatar isBordered src={user?.photoURL} className="cursor-pointer" />
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Static Actions">
-                                <DropdownItem key="new">Dashboard</DropdownItem>
                                 <DropdownItem key="delete" className="text-danger" onPress={handleLogout} color="danger">
                                     Log Out
                                 </DropdownItem>
@@ -164,10 +195,10 @@ export default function Header() {
                                 index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
                             }
                             className="w-full"
-                            href="#"
+                            href={item.url}
                             size="lg"
                         >
-                            {item}
+                            {item.text}
                         </Link>
                     </NavbarMenuItem>
                 ))}

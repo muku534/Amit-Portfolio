@@ -1,4 +1,4 @@
-// components/admin/AddMaterialPage.js
+// components/admin/PostBlogPage.js
 import React, { useState } from 'react';
 import { db } from '@/app/firebase';
 import { collection, addDoc } from 'firebase/firestore';
@@ -9,18 +9,18 @@ import 'react-quill/dist/quill.snow.css';
 import { Button, Input, Textarea } from '@nextui-org/react';
 import Image from 'next/image';
 
-const AddMaterialPage = () => {
+const PostBlogPages = () => {
+    const [blog, setBlog] = useState('');
 
-    const [material, setMaterial] = useState('');
-
-    const handleAddMaterial = async () => {
+    const handleAddBlog = async () => {
         try {
-            await addDoc(collection(db, 'materials'), { content: material });
-            setMaterial('');
+            await addDoc(collection(db, 'blogs'), { content: blog });
+            setBlog('');
         } catch (error) {
-            console.error('Error adding material: ', error);
+            console.error('Error adding blog: ', error);
         }
     };
+
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
     const [file, setFile] = useState(null);
@@ -59,6 +59,7 @@ const AddMaterialPage = () => {
                 // handle the error
             });
     };
+
 
     return (
         <main className="py-20 mx-auto max-w-screen-xl lg:px-20 lg:py-20">
@@ -109,7 +110,7 @@ const AddMaterialPage = () => {
                             </div>
 
                             <div className="field pb-5">
-                                <Button color="primary" type='submit' onPress={handleAddMaterial}>
+                                <Button color="primary" type='submit' onPress={handleAddBlog}>
                                     Loading
                                 </Button>
                             </div>
@@ -122,4 +123,4 @@ const AddMaterialPage = () => {
     );
 };
 
-export default withAdminAccess(AddMaterialPage);
+export default withAdminAccess(PostBlogPages)
