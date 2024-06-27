@@ -1,6 +1,6 @@
 // components/admin/AddMaterialPage.js
 import React, { useState } from 'react';
-import { db } from '@/app/firebase';
+import { db, storage } from '@/app/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import withAdminAccess from '../withAdminAccess';
 import '../../app/globals.css'
@@ -8,72 +8,85 @@ import axios from 'axios';
 import 'react-quill/dist/quill.snow.css';
 import { Button, Input, Textarea } from '@nextui-org/react';
 import Image from 'next/image';
+import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 
 const AddMaterialPage = () => {
-
-    const [material, setMaterial] = useState('');
-
-    const handleAddMaterial = async () => {
-        try {
-            await addDoc(collection(db, 'materials'), { content: material });
-            setMaterial('');
-        } catch (error) {
-            console.error('Error adding material: ', error);
-        }
-    };
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
     const [file, setFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState('');
+    const [image, setImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
         setFile(file);
-        const reader = new FileReader();
+    };
 
-        reader.onloadend = () => {
-            setImagePreview(reader.result);
+    const handleImageUpload = (event) => {
+        const image = event.target.files[0];
+        setImage(image);
+
+        const render = new FileReader();
+        render.onloadend = () => {
+            setImagePreview(render.result);
         };
-
-        if (file) {
-            reader.readAsDataURL(file);
+        if (image) {
+            render.readAsDataURL(image)
         }
     };
 
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('summary', summary);
-        formData.append('file', file);
+        try {
+            const imageRef = ref(storage, `Materials/${title}/image`);
+            await uploadBytes(imageRef, image);
+            const imageUrl = await getDownloadURL(imageRef);
 
-        axios
-            .post('http://localhost:5000/Material', formData)
-            .then((response) => {
-                console.log(response.data);
-                // do something with the response
-            })
-            .catch((error) => {
-                console.log(error);
-                // handle the error
+            const fileRef = ref(storage, `Materials/${title}/file`);
+            await uploadBytes(fileRef, file);
+            const fileUrl = await getDownloadURL(fileRef);
+
+            await addDoc(collection(db, 'materials'), {
+                title,
+                summary,
+                imageUrl,
+                fileUrl
             });
+
+            setTitle('');
+            setSummary('');
+            setImage(null);
+            setFile(null);
+            setImagePreview(null)
+
+        } catch (error) {
+            console.log("somthing went wrong", error)
+        }
+    };
+
+    const handleAddMaterial = async () => {
+        try {
+            await addDoc(collection(db, 'materials'), { content: material });
+        } catch (error) {
+            console.error('Error adding material: ', error);
+        }
     };
 
     return (
-        <main className="py-20 mx-auto max-w-screen-xl lg:px-20 md:mx-5 mx-5">
+        <main className="py-20 mx-auto max-w-screen-xl lg:px-20 lg:py-20 ">
             <div className="box-root flex flex-col lg:mx-24 " style={{ flexGrow: 1, zIndex: 9 }}>
                 <div className="mx-auto max-w-screen-lg text-center ">
-                    <h2 className="text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-gray">Add Material</h2>
+                    <h2 className="text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Add Material</h2>
                     <hr className="w-20 h-0.5 mx-auto my-1 bg-gray-100 border-0 rounded dark:bg-gray-500"></hr>
                     <p className="font-light text-gray-500 sm:text-xl dark:text-gray-400">We use an agile approach to test assumptions and connect with the needs of your audience early and often.</p>
                 </div>
 
-                <div className="formbg-outer max-w-screen-lg ">
+                <div className="formbg-outer max-w-screen-lg mt-5">
                     <div className="formbg-inner ph-8">
                         <form id="stripe-login" onSubmit={handleSubmit}>
                             <div className="field pb-5">
-                                <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800  hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 ">
+                                <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-500 dark:hover:bg-bray-800  hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 ">
                                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                         <svg aria-hidden="true" className="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
@@ -84,7 +97,7 @@ const AddMaterialPage = () => {
                                         <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF </p>
                                     </div>
                                 </label>
-                                <input id="dropzone-file" type="file" className="hidden" name='images' onChange={handleFileUpload} accept="images/*" />
+                                <input id="dropzone-file" type="file" className="hidden" name='images' accept="images/*" onChange={handleImageUpload} />
                             </div>
 
                             {imagePreview && (
@@ -109,8 +122,8 @@ const AddMaterialPage = () => {
                             </div>
 
                             <div className="field pb-5">
-                                <Button color="primary" type='submit' onPress={handleAddMaterial}>
-                                    Loading
+                                <Button color="primary" type='submit'>
+                                    Save
                                 </Button>
                             </div>
 

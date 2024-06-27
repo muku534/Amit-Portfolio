@@ -1,8 +1,10 @@
 "use client"
 
 import React, { useState, useEffect } from "react";
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image, image } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image, image, Button } from "@nextui-org/react";
 import axios from "axios";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
 const material = [
     {
@@ -47,21 +49,35 @@ const material = [
 
 
 export default function Materials() {
-    // const [material, setMaterial] = useState([]);
-    // const [loading, setLoading] = useState(true);
+    const [materials, setMaterials] = useState([]);
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const response = await axios.get('http://localhost:5000/getMaterial');
-    //             setMaterial(response.data.Materials);
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     };
+    useEffect(() => {
+        const fetchMaterials = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, 'materials'));
+                const fetchedMaterials = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                setMaterials(fetchedMaterials);
+            } catch (error) {
+                console.error('Error fetching materials: ', error);
+            }
+        };
 
-    //     fetchData();
-    // }, []);
+        fetchMaterials();
+    }, []);
+
+    const handleDownload = (material) => {
+        const fileUrl = material.fileUrl; // Replace with your actual file URL in Firebase Storage
+
+        if (fileUrl) {
+            window.open(fileUrl, '_blank'); // Open file in new tab
+            console.log(fileUrl)
+        } else {
+            console.error('File URL not found or permission denied.');
+        }
+    };
 
 
     return (
@@ -73,7 +89,7 @@ export default function Materials() {
                         <p className="text-md lg:text-md font-normal dark:text-gray-400 text-gray-400 tracking-tight mb-4 leading-relaxed">We use an agile approach to test assumptions and connect with the needs of your audience early and often.</p>
 
                         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-center items-center lg:items-start">
-                            {material.map((item, index) => (
+                            {materials.map((item, index) => (
                                 <article
                                     key={item._id}
                                     className="p-6 bg-white hover:shadow-xl rounded-lg border dark:bg-gray-800 dark:border-gray-700 border-gray-200 shadow-md"
@@ -92,15 +108,14 @@ export default function Materials() {
                                     </p>
                                     <div className="flex justify-center items-center">
                                         <div className=' justify-between '>
-                                            <a href="" type='download' className={`inline-flex items-center px-2 py-1 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-200 focus:text-blue-700 dark:text-gray-100  dark:bg-primary-600 dark:border-gray-600 dark:hover:text-gray-800 dark:hover:bg-gray-black dark:focus:ring-gray-700 '
-                                                }`} >
-                                                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd"></path></svg> PDF Notes
-                                            </a>
-                                            <a href="" type='download' className={`inline-flex ml-5 items-center px-2 py-1 justify-between text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-200 focus:text-blue-700 dark:text-gray-100  dark:bg-primary-600  dark:border-gray-600 dark:hover:text-gray-800 dark:hover:bg-gray-black dark:focus:ring-gray-700'
+                                            <Button onClick={() => handleDownload(item)}>
+                                                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clipRule="evenodd"></path></svg> Download PDF
+                                            </Button>
+                                            <Link href={item.fileUrl} download className={`inline-flex ml-5 items-center px-2 py-2 justify-between text-md font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-200 focus:text-blue-700 dark:text-gray-100  dark:bg-primary-600  dark:border-gray-600 dark:hover:text-gray-800 dark:hover:bg-gray-black dark:focus:ring-gray-700'
                                                 }`}
                                             >
                                                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd"></path></svg>  Chapterwise Notes
-                                            </a>
+                                            </Link>
                                         </div>
                                     </div>
                                 </article>
