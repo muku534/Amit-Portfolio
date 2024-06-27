@@ -6,14 +6,7 @@ import React from 'react';
 
 
 const AddMaterial = () => {
-    return (
-        <>
-            <Header />
-            <AddMaterials />;
-            <Footer />
-        </>
-    )
-
+    return <AddMaterials />;
 };
 
 export default AddMaterial;

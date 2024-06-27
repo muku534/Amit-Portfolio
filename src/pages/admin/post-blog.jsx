@@ -5,13 +5,7 @@ import Header from '@/components/navbar/page';
 import React from 'react';
 
 const PostBlog = () => {
-    return (
-        <>
-            <Header />
-            <PostBlogs />;
-            <Footer />
-        </>
-    )
+    return <PostBlogs />;
 };
 
 export default PostBlog;

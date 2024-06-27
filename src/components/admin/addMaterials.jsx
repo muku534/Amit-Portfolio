@@ -61,9 +61,9 @@ const AddMaterialPage = () => {
     };
 
     return (
-        <main className="py-20 mx-auto max-w-screen-xl lg:px-20 lg:py-20">
-            <div className="box-root  flex-flex flex-direction--column lg:mx-24 " style={{ flexGrow: 1, zIndex: 9 }}>
-                <div className="mx-auto max-w-screen-lg text-center lg:py-10 ">
+        <main className="py-20 mx-auto max-w-screen-xl lg:px-20 md:mx-5 mx-5">
+            <div className="box-root flex flex-col lg:mx-24 " style={{ flexGrow: 1, zIndex: 9 }}>
+                <div className="mx-auto max-w-screen-lg text-center ">
                     <h2 className="text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-gray">Add Material</h2>
                     <hr className="w-20 h-0.5 mx-auto my-1 bg-gray-100 border-0 rounded dark:bg-gray-500"></hr>
                     <p className="font-light text-gray-500 sm:text-xl dark:text-gray-400">We use an agile approach to test assumptions and connect with the needs of your audience early and often.</p>
