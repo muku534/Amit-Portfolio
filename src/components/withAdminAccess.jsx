@@ -1,4 +1,3 @@
-// components/withAdminAccess.js
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -6,7 +5,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/app/firebase';
 
 const withAdminAccess = (WrappedComponent) => {
-    return (props) => {
+    const WithAdminAccess = (props) => {
         const [loading, setLoading] = useState(true);
         const [user, setUser] = useState(null);
         const router = useRouter();
@@ -37,10 +36,14 @@ const withAdminAccess = (WrappedComponent) => {
 
         return user ? <WrappedComponent {...props} user={user} /> : null;
     };
+
+    WithAdminAccess.displayName = `WithAdminAccess(${getDisplayName(WrappedComponent)})`;
+
+    return WithAdminAccess;
+};
+
+const getDisplayName = (WrappedComponent) => {
+    return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 };
 
 export default withAdminAccess;
-
-
-
-
